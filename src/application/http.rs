@@ -2,6 +2,7 @@ mod http_consts;
 mod http_headers;
 mod http_methods;
 mod http_parse;
+mod http_response;
 
 use crate::errors::HttpErrors;
 use http_parse::{get_body, parse_headers, parse_start_line};
