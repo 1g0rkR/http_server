@@ -87,6 +87,7 @@ impl HttpRequest {
                     self.path.clone(),
                     self.version.clone(),
                     self.headers.clone(),
+                    "./public".to_string(),
                 )
                 .execute(&mut self.stream);
             }

@@ -38,9 +38,9 @@ impl Headers {
             headers: HashMap::new(),
         }
     }
-    pub fn set(&self, header: SetOfHeaders, value: String) -> Self {
-        self.headers.insert(header, value);
-        *self
+    pub fn set(mut self, header: SetOfHeaders, value: &str) -> Self {
+        self.headers.insert(header, value.to_string());
+        self
     }
 }
 
@@ -48,34 +48,34 @@ impl ToString for Headers {
     fn to_string(&self) -> String {
         self.headers
             .iter()
-            .fold("", |acc, (header, value)| {
-                let head_name: String = match *header {
-                    SetOfHeaders::AcceptRanges => "Accept-Ranges".to_string(),
-                    SetOfHeaders::Age => "Age".to_string(),
-                    SetOfHeaders::Allow => "Allow".to_string(),
-                    SetOfHeaders::CacheControl => "Cache-Control".to_string(),
-                    SetOfHeaders::Connection => "Connection".to_string(),
-                    SetOfHeaders::ContentEncoding => "Content-Encoding".to_string(),
-                    SetOfHeaders::ContentLanguage => "Content-Language".to_string(),
-                    SetOfHeaders::ContentLength => "Content-Length".to_string(),
-                    SetOfHeaders::ContentLocation => "Content-Location".to_string(),
-                    SetOfHeaders::ContentSecurityPolicy => "Content-Security-Policy".to_string(),
-                    SetOfHeaders::ContentType => "Content-Type".to_string(),
-                    SetOfHeaders::Date => "Date".to_string(),
-                    SetOfHeaders::ETag => "ETag".to_string(),
-                    SetOfHeaders::Expires => "Expires".to_string(),
-                    SetOfHeaders::LastModified => "Last-Modified".to_string(),
-                    SetOfHeaders::Location => "Location".to_string(),
-                    SetOfHeaders::ProxyAuthenticate => "Proxy-Authenticate".to_string(),
-                    SetOfHeaders::RetryAfter => "Retry-After".to_string(),
-                    SetOfHeaders::Server => "Server".to_string(),
-                    SetOfHeaders::SetCookie => "Set-Cookie".to_string(),
-                    SetOfHeaders::TransferEncoding => "Transfer-Encoding".to_string(),
-                    SetOfHeaders::Vary => "Vary".to_string(),
-                    SetOfHeaders::Via => "Via".to_string(),
+            .fold("".to_string(), |acc, (header, value)| {
+                let head_name: &str = match *header {
+                    SetOfHeaders::AcceptRanges => "Accept-Ranges",
+                    SetOfHeaders::Age => "Age",
+                    SetOfHeaders::Allow => "Allow",
+                    SetOfHeaders::CacheControl => "Cache-Control",
+                    SetOfHeaders::Connection => "Connection",
+                    SetOfHeaders::ContentEncoding => "Content-Encoding",
+                    SetOfHeaders::ContentLanguage => "Content-Language",
+                    SetOfHeaders::ContentLength => "Content-Length",
+                    SetOfHeaders::ContentLocation => "Content-Location",
+                    SetOfHeaders::ContentSecurityPolicy => "Content-Security-Policy",
+                    SetOfHeaders::ContentType => "Content-Type",
+                    SetOfHeaders::Date => "Date",
+                    SetOfHeaders::ETag => "ETag",
+                    SetOfHeaders::Expires => "Expires",
+                    SetOfHeaders::LastModified => "Last-Modified",
+                    SetOfHeaders::Location => "Location",
+                    SetOfHeaders::ProxyAuthenticate => "Proxy-Authenticate",
+                    SetOfHeaders::RetryAfter => "Retry-After",
+                    SetOfHeaders::Server => "Server",
+                    SetOfHeaders::SetCookie => "Set-Cookie",
+                    SetOfHeaders::TransferEncoding => "Transfer-Encoding",
+                    SetOfHeaders::Vary => "Vary",
+                    SetOfHeaders::Via => "Via",
                 };
 
-                &format!("{}{}{}{}: {}", acc, CR, LF, head_name, value)
+                format!("{}{}{}{}: {}", acc, CR, LF, head_name, value)
             })
             .trim()
             .to_string()

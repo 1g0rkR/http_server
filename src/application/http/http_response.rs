@@ -1,6 +1,10 @@
-use std::fmt;
+use std::{fmt, time::SystemTime};
 
-use crate::application::http::http_consts::HTTP_VERSION;
+use super::{
+    http_consts::HTTP_VERSION,
+    http_consts::{CR, LF},
+    http_headers::{Headers, SetOfHeaders},
+};
 
 pub enum ResponseCode {
     Continue = 100,
@@ -71,101 +75,373 @@ impl fmt::Display for ResponseCode {
 
 pub struct Response {
     code: ResponseCode,
+    headers: Headers,
 }
 
 impl Response {
-    pub fn new(code: ResponseCode) -> Response {
-        Response { code }
+    pub fn new(code: ResponseCode, headers: Headers) -> Response {
+        Response { code, headers }
     }
 }
 
 impl ToString for Response {
     fn to_string(&self) -> String {
+        let headers_str = self.headers.to_string();
         match self.code {
             ResponseCode::Continue => {
-                format!("{} {}", HTTP_VERSION, ResponseCode::Continue)
+                format!(
+                    "{} {}{}{}{}",
+                    HTTP_VERSION,
+                    ResponseCode::Continue,
+                    CR,
+                    LF,
+                    headers_str
+                )
             }
             ResponseCode::SwitchingProtocols => {
-                format!("{} {}", HTTP_VERSION, ResponseCode::SwitchingProtocols)
+                format!(
+                    "{} {}{}{}{}",
+                    HTTP_VERSION,
+                    ResponseCode::SwitchingProtocols,
+                    CR,
+                    LF,
+                    headers_str
+                )
             }
             ResponseCode::Processing => {
-                format!("{} {}", HTTP_VERSION, ResponseCode::Processing)
+                format!(
+                    "{} {}{}{}{}",
+                    HTTP_VERSION,
+                    ResponseCode::Processing,
+                    CR,
+                    LF,
+                    headers_str
+                )
             }
             ResponseCode::Ok => {
-                format!("{} {}", HTTP_VERSION, ResponseCode::Ok)
+                format!(
+                    "{} {}{}{}{}",
+                    HTTP_VERSION,
+                    ResponseCode::Ok,
+                    CR,
+                    LF,
+                    headers_str
+                )
             }
             ResponseCode::Created => {
-                format!("{} {}", HTTP_VERSION, ResponseCode::Created)
+                format!(
+                    "{} {}{}{}{}",
+                    HTTP_VERSION,
+                    ResponseCode::Created,
+                    CR,
+                    LF,
+                    headers_str
+                )
             }
             ResponseCode::Accepted => {
-                format!("{} {}", HTTP_VERSION, ResponseCode::Accepted)
+                format!(
+                    "{} {}{}{}{}",
+                    HTTP_VERSION,
+                    ResponseCode::Accepted,
+                    CR,
+                    LF,
+                    headers_str
+                )
             }
             ResponseCode::NoContent => {
-                format!("{} {}", HTTP_VERSION, ResponseCode::NoContent)
+                format!(
+                    "{} {}{}{}{}",
+                    HTTP_VERSION,
+                    ResponseCode::NoContent,
+                    CR,
+                    LF,
+                    headers_str
+                )
             }
             ResponseCode::ResetContent => {
-                format!("{} {}", HTTP_VERSION, ResponseCode::ResetContent)
+                format!(
+                    "{} {}{}{}{}",
+                    HTTP_VERSION,
+                    ResponseCode::ResetContent,
+                    CR,
+                    LF,
+                    headers_str
+                )
             }
             ResponseCode::PartialContent => {
-                format!("{} {}", HTTP_VERSION, ResponseCode::PartialContent)
+                format!(
+                    "{} {}{}{}{}",
+                    HTTP_VERSION,
+                    ResponseCode::PartialContent,
+                    CR,
+                    LF,
+                    headers_str
+                )
             }
             ResponseCode::MultiStatus => {
-                format!("{} {}", HTTP_VERSION, ResponseCode::MultiStatus)
+                format!(
+                    "{} {}{}{}{}",
+                    HTTP_VERSION,
+                    ResponseCode::MultiStatus,
+                    CR,
+                    LF,
+                    headers_str
+                )
             }
             ResponseCode::IMUsed => {
-                format!("{} {}", HTTP_VERSION, ResponseCode::IMUsed)
+                format!(
+                    "{} {}{}{}{}",
+                    HTTP_VERSION,
+                    ResponseCode::IMUsed,
+                    CR,
+                    LF,
+                    headers_str
+                )
             }
             ResponseCode::MovedPermanently => {
-                format!("{} {}", HTTP_VERSION, ResponseCode::MovedPermanently)
+                format!(
+                    "{} {}{}{}{}",
+                    HTTP_VERSION,
+                    ResponseCode::MovedPermanently,
+                    CR,
+                    LF,
+                    headers_str
+                )
             }
             ResponseCode::Found => {
-                format!("{} {}", HTTP_VERSION, ResponseCode::Found)
+                format!(
+                    "{} {}{}{}{}",
+                    HTTP_VERSION,
+                    ResponseCode::Found,
+                    CR,
+                    LF,
+                    headers_str
+                )
             }
             ResponseCode::SeeOther => {
-                format!("{} {}", HTTP_VERSION, ResponseCode::SeeOther)
+                format!(
+                    "{} {}{}{}{}",
+                    HTTP_VERSION,
+                    ResponseCode::SeeOther,
+                    CR,
+                    LF,
+                    headers_str
+                )
             }
             ResponseCode::NotModified => {
-                format!("{} {}", HTTP_VERSION, ResponseCode::NotModified)
+                format!(
+                    "{} {}{}{}{}",
+                    HTTP_VERSION,
+                    ResponseCode::NotModified,
+                    CR,
+                    LF,
+                    headers_str
+                )
             }
             ResponseCode::UseProxy => {
-                format!("{} {}", HTTP_VERSION, ResponseCode::UseProxy)
+                format!(
+                    "{} {}{}{}{}",
+                    HTTP_VERSION,
+                    ResponseCode::UseProxy,
+                    CR,
+                    LF,
+                    headers_str
+                )
             }
             ResponseCode::TemporaryRedirect => {
-                format!("{} {}", HTTP_VERSION, ResponseCode::TemporaryRedirect)
+                format!(
+                    "{} {}{}{}{}",
+                    HTTP_VERSION,
+                    ResponseCode::TemporaryRedirect,
+                    CR,
+                    LF,
+                    headers_str
+                )
             }
             ResponseCode::BadRequest => {
-                format!("{} {}", HTTP_VERSION, ResponseCode::BadRequest)
+                format!(
+                    "{} {}{}{}{}",
+                    HTTP_VERSION,
+                    ResponseCode::BadRequest,
+                    CR,
+                    LF,
+                    headers_str
+                )
             }
             ResponseCode::Unauthorized => {
-                format!("{} {}", HTTP_VERSION, ResponseCode::Unauthorized)
+                format!(
+                    "{} {}{}{}{}",
+                    HTTP_VERSION,
+                    ResponseCode::Unauthorized,
+                    CR,
+                    LF,
+                    headers_str
+                )
             }
             ResponseCode::PaymentRequired => {
-                format!("{} {}", HTTP_VERSION, ResponseCode::PaymentRequired)
+                format!(
+                    "{} {}{}{}{}",
+                    HTTP_VERSION,
+                    ResponseCode::PaymentRequired,
+                    CR,
+                    LF,
+                    headers_str
+                )
             }
             ResponseCode::Forbidden => {
-                format!("{} {}", HTTP_VERSION, ResponseCode::Forbidden)
+                format!(
+                    "{} {}{}{}{}",
+                    HTTP_VERSION,
+                    ResponseCode::Forbidden,
+                    CR,
+                    LF,
+                    headers_str
+                )
             }
             ResponseCode::NotFound => {
-                format!("{} {}", HTTP_VERSION, ResponseCode::NotFound)
+                format!(
+                    "{} {}{}{}{}",
+                    HTTP_VERSION,
+                    ResponseCode::NotFound,
+                    CR,
+                    LF,
+                    headers_str
+                )
             }
             ResponseCode::RequestTimeout => {
-                format!("{} {}", HTTP_VERSION, ResponseCode::RequestTimeout)
+                format!(
+                    "{} {}{}{}{}",
+                    HTTP_VERSION,
+                    ResponseCode::RequestTimeout,
+                    CR,
+                    LF,
+                    headers_str
+                )
             }
             ResponseCode::InternalServerError => {
-                format!("{} {}", HTTP_VERSION, ResponseCode::InternalServerError)
+                format!(
+                    "{} {}{}{}{}",
+                    HTTP_VERSION,
+                    ResponseCode::InternalServerError,
+                    CR,
+                    LF,
+                    headers_str
+                )
             }
             ResponseCode::BadGateway => {
-                format!("{} {}", HTTP_VERSION, ResponseCode::BadGateway)
+                format!(
+                    "{} {}{}{}{}",
+                    HTTP_VERSION,
+                    ResponseCode::BadGateway,
+                    CR,
+                    LF,
+                    headers_str
+                )
             }
             ResponseCode::ServiceUnavailable => {
-                format!("{} {}", HTTP_VERSION, ResponseCode::ServiceUnavailable)
+                format!(
+                    "{} {}{}{}{}",
+                    HTTP_VERSION,
+                    ResponseCode::ServiceUnavailable,
+                    CR,
+                    LF,
+                    headers_str
+                )
             }
             ResponseCode::GatewayTimeout => {
-                format!("{} {}", HTTP_VERSION, ResponseCode::GatewayTimeout)
+                format!(
+                    "{} {}{}{}{}",
+                    HTTP_VERSION,
+                    ResponseCode::GatewayTimeout,
+                    CR,
+                    LF,
+                    headers_str
+                )
             }
             ResponseCode::HTTPVersionNotSupported => {
-                format!("{} {}", HTTP_VERSION, ResponseCode::HTTPVersionNotSupported)
+                format!(
+                    "{} {}{}{}{}",
+                    HTTP_VERSION,
+                    ResponseCode::HTTPVersionNotSupported,
+                    CR,
+                    LF,
+                    headers_str
+                )
             }
         }
+    }
+}
+
+pub struct Response404 {}
+
+impl Response404 {
+    pub fn get() -> String {
+        let text = "ERROR 404 NOT FOUND";
+        let line = format!("{}{}{}{}", CR, LF, CR, LF);
+        let headers = Headers::new()
+            .set(SetOfHeaders::Server, "Rust Server")
+            .set(SetOfHeaders::ContentType, "text/plain")
+            .set(SetOfHeaders::ContentLength, &format!("{}", text.len()));
+
+        format!(
+            "{}{}{}{}",
+            Response::new(ResponseCode::NotFound, headers).to_string(),
+            &line,
+            &text,
+            &line
+        )
+    }
+}
+
+pub struct Response400 {}
+
+impl Response400 {
+    pub fn get() -> String {
+        let text = "ERROR 400 BAD REQUEST";
+        let line = format!("{}{}{}{}", CR, LF, CR, LF);
+        let headers = Headers::new()
+            .set(SetOfHeaders::Server, "Rust Server")
+            .set(SetOfHeaders::ContentType, "text/plain")
+            .set(SetOfHeaders::ContentLength, &format!("{}", text.len()));
+
+        format!(
+            "{}{}{}{}",
+            Response::new(ResponseCode::BadRequest, headers).to_string(),
+            &line,
+            &text,
+            &line
+        )
+    }
+}
+
+pub struct Response200 {}
+
+impl Response200 {
+    pub fn get(body: String) -> String {
+        let line = format!("{}{}{}{}", CR, LF, CR, LF);
+        let headers = Headers::new()
+            .set(SetOfHeaders::Server, "Rust Server")
+            .set(SetOfHeaders::ContentType, "text/plain")
+            .set(SetOfHeaders::ContentLength, &format!("{}", body.len()));
+
+        format!(
+            "{}{}{}{}",
+            Response::new(ResponseCode::Ok, headers).to_string(),
+            &line,
+            &body,
+            &line
+        )
+    }
+
+    pub fn get_with_headers(body: String, headers: Headers) -> String {
+        let line = format!("{}{}{}{}", CR, LF, CR, LF);
+
+        format!(
+            "{}{}{}{}",
+            Response::new(ResponseCode::Ok, headers).to_string(),
+            &line,
+            &body,
+            &line
+        )
     }
 }
