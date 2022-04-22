@@ -31,6 +31,7 @@ pub enum ResponseCode {
     NotFound = 404,
     RequestTimeout = 408,
     InternalServerError = 500,
+    NotImplemented = 501,
     BadGateway = 502,
     ServiceUnavailable = 503,
     GatewayTimeout = 504,
@@ -64,6 +65,7 @@ impl fmt::Display for ResponseCode {
             ResponseCode::NotFound => "404 Not Found",
             ResponseCode::RequestTimeout => "408 Request Timeout",
             ResponseCode::InternalServerError => "500 Internal Server Error",
+            ResponseCode::NotImplemented => "501 Not Implemented",
             ResponseCode::BadGateway => "502 Bad Gateway",
             ResponseCode::ServiceUnavailable => "503 Service Unavailable",
             ResponseCode::GatewayTimeout => "504 Gateway Timeout",
@@ -368,6 +370,16 @@ impl ToString for Response {
                     headers_str
                 )
             }
+            ResponseCode::NotImplemented => {
+                format!(
+                    "{} {}{}{}{}",
+                    HTTP_VERSION,
+                    ResponseCode::NotImplemented,
+                    CR,
+                    LF,
+                    headers_str
+                )
+            }
         }
     }
 }
@@ -432,15 +444,24 @@ impl Response200 {
             &line
         )
     }
+}
 
-    pub fn get_with_headers(body: String, headers: Headers) -> String {
+pub struct Response501 {}
+
+impl Response501 {
+    pub fn get() -> String {
+        let text = "ERROR 501 NOT IMPLEMENTED";
         let line = format!("{}{}{}{}", CR, LF, CR, LF);
+        let headers = Headers::new()
+            .set(SetOfHeaders::Server, "Rust Server")
+            .set(SetOfHeaders::ContentType, "text/plain")
+            .set(SetOfHeaders::ContentLength, &format!("{}", text.len()));
 
         format!(
             "{}{}{}{}",
-            Response::new(ResponseCode::Ok, headers).to_string(),
+            Response::new(ResponseCode::NotImplemented, headers).to_string(),
             &line,
-            &body,
+            &text,
             &line
         )
     }

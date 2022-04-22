@@ -2,14 +2,15 @@ mod http_consts;
 mod http_headers;
 mod http_methods;
 mod http_parse;
-mod http_response;
+pub mod http_response;
 
-use crate::errors::HttpErrors;
 use http_parse::{get_body, parse_headers, parse_start_line};
+use std::io::Write;
 use std::{collections::HashMap, io::Read, net::TcpStream};
 
 use self::http_consts::SIZE;
 use self::http_methods::method_get;
+use self::http_response::{Response400, Response501};
 
 pub struct HttpRequest {
     method: String,
@@ -21,7 +22,7 @@ pub struct HttpRequest {
 }
 
 impl HttpRequest {
-    pub fn new(mut stream: TcpStream) -> Result<HttpRequest, HttpErrors> {
+    pub fn new(mut stream: TcpStream) -> HttpRequest {
         let mut buffer: String = String::new();
         let mut buf = [0u8; SIZE];
 
@@ -35,29 +36,46 @@ impl HttpRequest {
                 }
             }
         }
-        let (method, path, version) = parse_start_line(&buffer)?;
+        let mut method = String::new();
+        let mut path = String::new();
+        let mut version = String::new();
+        ("".to_string(), "".to_string(), "".to_string());
+        if let Ok((_method, _path, _version)) = parse_start_line(&buffer) {
+            method = _method;
+            path = _path;
+            version = _version;
+        } else {
+            stream.write(Response400::get().as_bytes()).unwrap();
+            stream.flush().unwrap();
+        }
 
-        let headers: HashMap<String, String> = parse_headers(&buffer)?;
+        let mut headers: HashMap<String, String> = HashMap::new();
+        if let Ok(hashmap) = parse_headers(&buffer) {
+            headers = hashmap;
+        } else {
+            stream.write(Response400::get().as_bytes()).unwrap();
+            stream.flush().unwrap();
+        }
 
         if let Ok(body) = get_body(&buffer) {
-            return Ok(HttpRequest {
+            return HttpRequest {
                 method,
                 path,
                 version,
                 headers,
                 body,
                 stream,
-            });
+            };
         }
 
-        Ok(HttpRequest {
+        HttpRequest {
             method,
             path,
             version,
             headers,
             body: "".to_string(),
             stream,
-        })
+        }
     }
 
     pub fn get_method(&self) -> &str {
@@ -91,7 +109,10 @@ impl HttpRequest {
                 )
                 .execute(&mut self.stream);
             }
-            _ => panic!("Panic"),
+            _ => {
+                self.stream.write(Response501::get().as_bytes()).unwrap();
+                self.stream.flush().unwrap();
+            }
         }
     }
 }

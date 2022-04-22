@@ -1,9 +1,6 @@
+use crate::application::http::http_consts::{COLON_SYMBOL, SEPARATOR_BODY, SPACE_SYMBOL};
 use crate::errors::HttpErrors;
 use std::collections::HashMap;
-
-const SPACE_SYMBOL: &'static str = " ";
-const COLON_SYMBOL: &'static str = ":";
-const SEPARATOR_BODY: &'static str = "\r\n\r\n";
 
 pub fn parse_start_line(buffer: &str) -> Result<(String, String, String), HttpErrors> {
     let start_line: &str;

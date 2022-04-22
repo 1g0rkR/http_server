@@ -1,11 +1,9 @@
 mod threadpool;
 
-use crate::application::http;
 use threadpool::ThreadPool;
 
 use std::{
     error::Error,
-    io::Write,
     net::{TcpListener, TcpStream},
     sync::Arc,
 };
@@ -50,8 +48,6 @@ impl TransportTrait for Transport {
         for stream in listener.incoming() {
             match stream {
                 Ok(stream) => {
-                    // threads.execute(move || http::HttpRequest::new(stream).unwrap().execute())?;
-
                     let func = Arc::clone(&fn_app_level);
                     threads.execute(move || {
                         func(stream);
